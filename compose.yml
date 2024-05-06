@@ -1,0 +1,48 @@
+volumes:
+  db-store:
+
+configs:
+  db-config:
+    file: ./docker/mysql/my.cnf
+
+services:
+  node:
+    build:
+      context: .
+      dockerfile: ./docker/node/Dockerfile
+    volumes:
+      - ./src:/app
+      - /app/node_modules
+    ports:
+      - 3000:3000
+  db:
+    build:
+      context: .
+      dockerfile: ./docker/mysql/Dockerfile
+    ports:
+      - target: 3306
+        published: ${DB_PUBLISHED_PORT:-3306}
+        protocol: tcp
+        mode: host
+    configs:
+      - source: db-config
+        target: /etc/my.cnf
+    volumes:
+      - type: volume
+        source: db-store
+        target: /var/lib/mysql
+        volume:
+          nocopy: true
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE:-jamp_db}
+      - MYSQL_USER=${DB_USERNAME:-jamper}
+      - MYSQL_PASSWORD=${DB_PASSWORD:-123456}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-123456}
+
+  pma:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mysql
+      - PMA_USER=root
+      - PMA_PASSWORD=rootpassword
