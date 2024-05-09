@@ -14,14 +14,14 @@ services:
       - ./src:/app
       - /app/node_modules
     ports:
-      - 3000:3000
+      - 5000:3000
   db:
     build:
       context: .
       dockerfile: ./docker/mysql/Dockerfile
     ports:
       - target: 3306
-        published: ${DB_PUBLISHED_PORT:-3306}
+        published: ${DB_PUBLISHED_PORT:-5306}
         protocol: tcp
         mode: host
     configs:
@@ -42,7 +42,7 @@ services:
   pma:
     image: phpmyadmin/phpmyadmin
     ports:
-      - 4000:80
+      - 5001:80
     environment:
       - PMA_ARBITRARY=1
       - PMA_HOST=db
