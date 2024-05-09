@@ -41,8 +41,10 @@ services:
 
   pma:
     image: phpmyadmin/phpmyadmin
+    ports:
+      - 4000:80
     environment:
       - PMA_ARBITRARY=1
-      - PMA_HOST=mysql
+      - PMA_HOST=db
       - PMA_USER=root
-      - PMA_PASSWORD=rootpassword
+      - PMA_PASSWORD=123456
